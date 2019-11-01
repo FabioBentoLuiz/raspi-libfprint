@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.demo.libfprint.configurations.LibfprintProperties;
-
-import valueObjects.LibfprintMessage;
+import com.demo.libfprint.valueobjects.LibfprintMessage;
 
 @Service
 public class LibfprintApiService {
@@ -18,13 +17,17 @@ public class LibfprintApiService {
 		this.libApiProperties = libApiProperties;
 	}
 	
-	public boolean startEnroll(Integer userId) {
+	public String startEnroll(Integer userId) {
 		final String uri = this.libApiProperties.getUris().getEnroll();
+		
+		try {
+		    RestTemplate restTemplate = new RestTemplate();
+		    String result = restTemplate.postForObject(uri, new LibfprintMessage(userId.toString()), String.class);
 
-	    RestTemplate restTemplate = new RestTemplate();
-	    String result = restTemplate.postForObject(uri, new LibfprintMessage(userId.toString()), String.class);
-
-	    return result.equals("OK");
+		    return result;
+		}catch(Exception e) {
+			return e.getMessage() + " " + uri;
+		}
 		
 	}
 

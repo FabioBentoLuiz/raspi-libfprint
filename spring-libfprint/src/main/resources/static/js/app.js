@@ -4,21 +4,36 @@ function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
     if (connected) {
-        $("#conversation").show();
+    	
+    	$.get( "/startEnroll?userId="+$("#userId").val() , function(msg) {
+    		  console.log( "success startEnroll" );
+    		  showGreeting(msg);
+    		})
+    		  .done(function() {
+    			  console.log( "done startEnroll" );
+    		  })
+    		  .fail(function() {
+    			  console.log( "error startEnroll" );
+    		  })
+    		  .always(function() {
+    			  console.log( "finished startEnroll" );
+    		  });
+    	
+        $("#msgs-table").show();
     }
     else {
-        $("#conversation").hide();
+        $("#msgs-table").hide();
     }
-    $("#greetings").html("");
+    $("#msgs-list").html("");
 }
 
 function connect() {
-    var socket = new SockJS('/gs-guide-websocket');
+    var socket = new SockJS('/libfprint-ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/greetings', function (greeting) {
+        stompClient.subscribe('/user/queue/from-libfprint', function (greeting) {
             showGreeting(JSON.parse(greeting.body).content);
         });
     });
@@ -33,11 +48,11 @@ function disconnect() {
 }
 
 function sendName() {
-    stompClient.send("/hello", {}, JSON.stringify({'parameter': $("#name").val(), 'value': $("#name").val()}));
+    stompClient.send("/sendMessage", {}, JSON.stringify({'parameter': $("#name").val(), 'id': $("#id").val()}));
 }
 
 function showGreeting(message) {
-    $("#greetings").append("<tr><td>" + message + "</td></tr>");
+    $("#msgs-list").append("<tr><td>" + message + "</td></tr>");
 }
 
 $(function () {

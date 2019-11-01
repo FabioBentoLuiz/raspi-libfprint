@@ -5,6 +5,8 @@ import java.io.InputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,8 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.libfprint.entities.User;
 import com.demo.libfprint.services.LibfprintApiService;
 import com.demo.libfprint.services.LibfprintUserService;
-
-import valueObjects.LibfprintMessage;
+import com.demo.libfprint.valueobjects.LibfprintMessage;
 
 @RestController
 public class LibfprintDemoController {
@@ -23,13 +24,14 @@ public class LibfprintDemoController {
 	private LibfprintApiService libApiService;
 	
 	@Autowired
-	public LibfprintDemoController(LibfprintUserService userService) {
+	public LibfprintDemoController(LibfprintUserService userService, LibfprintApiService libApiService) {
 		this.userService = userService;
+		this.libApiService = libApiService;
 	}
 	
 	@RequestMapping(value ="/startEnroll", method = RequestMethod.GET)
-	public void startEnroll(int userId) {
-		this.libApiService.startEnroll(userId);
+	public String startEnroll(int userId) {
+		return this.libApiService.startEnroll(userId);
 	}
 	
 	@RequestMapping(value ="/saveFingerprint", method = RequestMethod.POST)
@@ -40,6 +42,7 @@ public class LibfprintDemoController {
     }
 	
 	
+	//LibfprintMessage message
 	@RequestMapping(value ="/getFingerprint", method = RequestMethod.GET)
 	public byte[] getFingerprint(int userId) {
 		User user = this.userService.getUser(userId);
@@ -59,10 +62,10 @@ public class LibfprintDemoController {
 		return fingerprints;
 	}
 	
-	@MessageMapping("/hello")
+	/*@MessageMapping("/sendMessage")
     @SendTo("/topic/greetings")
     public LibfprintMessage greeting(LibfprintMessage message) throws Exception {
         Thread.sleep(1000); // simulated delay
         return new LibfprintMessage("enroll");
-    }
+    }*/
 }
