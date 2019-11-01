@@ -1,4 +1,4 @@
-package com.demo.libfprint;
+package com.demo.libfprint.configurations;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

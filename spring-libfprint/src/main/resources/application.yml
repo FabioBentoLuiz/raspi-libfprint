@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: dev
+    
+---
+
+spring:
+  profiles: dev
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost/libfprint
+    username: libfprint
+    password: 123456
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+      enabled: true
+libfprint:
+  uris:
+    enroll: "http://192.168.2.124:3000"
+    verify: "http://192.168.2.124:3000"
+    identify: "http://192.168.2.124:3000"

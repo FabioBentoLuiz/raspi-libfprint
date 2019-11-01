@@ -1,6 +1,4 @@
-package com.demo.libfprint;
-
-import java.sql.Blob;
+package com.demo.libfprint.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
