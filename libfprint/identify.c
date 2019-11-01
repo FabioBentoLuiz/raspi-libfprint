@@ -10,7 +10,7 @@ static void on_http_request(http_s *h);
 static void on_http_response(http_s *h);
 
 
-struct fp_print_data *data;
+struct fp_print_data **data;
 int userId;
 
 struct fp_dscv_dev *discover_device(struct fp_dscv_dev **discovered_devs)
@@ -21,53 +21,37 @@ struct fp_dscv_dev *discover_device(struct fp_dscv_dev **discovered_devs)
 		return NULL;
 	
 	drv = fp_dscv_dev_get_driver(ddev);
-	fprintf(stdout, "Found device claimed by %s driver\n", fp_driver_get_full_name(drv));
+	printf("Found device claimed by %s driver\n", fp_driver_get_full_name(drv));
 	return ddev;
 }
 
-int verify(struct fp_dev *dev, struct fp_print_data *data)
+int verify(struct fp_dev *dev, struct fp_print_data **data)
 {
 	int r;
 
 	do {
-		struct fp_img *img = NULL;
-
-		sleep(1);
-		fprintf(stdout, "Waiting fingerprint scan...\n");
-		r = fp_verify_finger_img(dev, data, &img);
-		/*if (img) {
-			fp_img_save_to_file(img, "verify.pgm");
-			printf("Wrote scanned image to verify.pgm\n");
-			fp_img_free(img);
-		}*/
+	        size_t matchOffset[50000];
+		printf("\nScan your finger now.\n");
+		r = fp_identify_finger(dev, data, matchOffset);
+		
+		
 		if (r < 0) {
-			fprintf(stderr, "Verification failed with error %d\n", r);
+			printf("verification failed with error %d :(\n", r);
 			return r;
 		}
+		
 		switch (r) {
 		case FP_VERIFY_NO_MATCH:
-			fprintf(stdout, "NO MATCH!\n");
+			printf("NO MATCH!\n");
 			return 0;
 		case FP_VERIFY_MATCH:
-			fprintf(stdout, "MATCH!\n");
+			printf("MATCH!\n");
 			return 0;
-		case FP_VERIFY_RETRY:
-			fprintf(stdout, "Scan didn't quite work. Please try again.\n");
-			break;
-		case FP_VERIFY_RETRY_TOO_SHORT:
-			fprintf(stdout, "Swipe was too short, please try again.\n");
-			break;
-		case FP_VERIFY_RETRY_CENTER_FINGER:
-			fprintf(stdout, "Please center your finger on the sensor and try again.\n");
-			break;
-		case FP_VERIFY_RETRY_REMOVE_FINGER:
-			fprintf(stdout, "Please remove finger from the sensor and try again.\n");
-			break;
 		}
 	} while (1);
 }
 
-int startVerification()
+int startIdentification()
 {
 	int r = 1;
 	struct fp_dscv_dev *ddev;
@@ -101,6 +85,12 @@ int startVerification()
 		fprintf(stderr, "Could not open device.\n");
 		goto out;
 	}
+	
+	int hasIdentification = fp_dev_supports_identification(dev);
+	if(!hasIdentification) {
+	  fprintf(stderr, "Your fingerprint device doesn't support identification.\n");
+	  goto out_close;
+	}
 
 	printf("Opened device. Loading previously enrolled right index finger "
 		"data...\n");
@@ -112,11 +102,11 @@ int startVerification()
 		goto out_close;
 	}
 
-	fprintf(stdout, "Print loaded, starting verification...\n");
+	printf("Print loaded. Time to verify!\n");
 	
 	verify(dev, data);
 
-	fp_print_data_free(data);
+	fp_print_data_free(data[0]);
 out_close:
 	fp_dev_close(dev);
 out:
@@ -128,20 +118,25 @@ static void on_http_request(http_s *h) {
   
   http_parse_body(h);
   FIOBJ obj = h->body;
+  fio_str_info_s raw = fiobj_obj2cstr(obj);
+  size_t consumed = fiobj_json2obj(&obj, raw.data, 1024);
+  char header[1024];
+
+  if (!consumed || !obj) {
+    perror("ERROR, couldn't parse data.\n");
+  }
   
   FIOBJ key = fiobj_str_new("parameter", 9);
   fio_str_info_s param;
-  
   if (FIOBJ_TYPE_IS(obj, FIOBJ_T_HASH) // make sure the JSON object is a Hash
       && fiobj_hash_get(obj, key)) {   // test for the existence of the key
         param = fiobj_obj2cstr(fiobj_hash_get(obj, key));
         userId = atoi(param.data);
-        fprintf(stdout, "Requested verification for user ID %d\n", userId);
+        fprintf(stdout, "Requested enrollment for user ID %d\n", userId);
   }else{
-	  
-	  fprintf(stderr,"Error parsing json message from webserver. No parameter data found.\n");
-	  http_send_body(h, "ERROR", 2);
-	  return;
+      fprintf(stderr,"Error parsing json message from webserver. No parameter data found.\n");
+      http_send_body(h, "ERROR", 2);
+      return;
   }
   
   fiobj_free(key);
@@ -151,9 +146,7 @@ static void on_http_request(http_s *h) {
   
   char* ip = getenv("WEBSERVER");
   char* port = getenv("WEBSERVER_PORT");
-  char header[1024];
-  
-  sprintf(header, "%s:%s/getFingerprint?userId=%d", ip, port, userId);
+  sprintf(header, "%s:%s/identify", ip, port);
   
   http_connect(header, NULL, .on_response = on_http_response);
   
@@ -166,42 +159,47 @@ static void on_http_response(http_s *h) {
 	  //ignore the first empty response
 	  http_finish(h);
 	  return;
-  }
+  } 
   
   http_parse_body(h);
   FIOBJ obj = h->body;
   fio_str_info_s raw = fiobj_obj2cstr(obj);
-  fprintf(stdout, "Fingerprint received - size = %d\n", raw.len);
+  int totalSize = raw.len;
+ printf("Processing...\n");
+  unsigned char copy[30000];
+  int i = 0, j = 0, pos = 0;
+  for(pos = 0; pos < totalSize; pos++) {
+    fprintf(stderr, "pos %d\n", pos);
+      if(raw.data[pos] == '\t'){
+	copy[i] = '\0';
+	data[j] = malloc(sizeof *data);
+	data[j] = fp_print_data_from_data(copy, i+1);
+	j++;
+	i = 0;
+	for(int x = 0; x < 30000; x++)
+	  copy[x] = '\0';
+      }else {
+	copy[i] = raw.data[pos];
+	i++;
+      }
+      
+  }
   
-  data = fp_print_data_from_data((unsigned char *)raw.data, raw.len);
-  
-  if(!data)
-	fprintf(stderr, "Fingerprint data conversion failed!\n");
-  
+    
   http_send_body(h, "OK", 2);
 
-  fiobj_free(obj);
+	fiobj_free(obj);
 
-  startVerification();
+	startIdentification();
 }
 
 int main() {
-  
-  //spring boot IP and port
-  char* ip = getenv("WEBSERVER");
-  char* port = getenv("WEBSERVER_PORT");
-  
-  if(strlen(ip) == 0 || strlen(port) == 0){
-    fprintf(stderr, "Environment variables WEBSERVER and WEBSERVER_PORT not set.\n");
-    return 1;
-  } else{
-    fprintf(stdout, "WEBSERVER=%s, WEBSERVER_PORT=%s\n", ip, port);
-  }
 
   if (http_listen("3000", NULL,
                   .on_request = on_http_request) == -1) {
-    fprintf(stderr, "facil.io couldn't initialize HTTP service (already running?)\n");
-    return 1;
+    perror(
+        "ERROR: facil.io couldn't initialize HTTP service (already running?)\n");
+    exit(1);
   }
   
   fio_start(.threads = 1, .workers = 1);
