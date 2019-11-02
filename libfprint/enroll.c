@@ -65,8 +65,6 @@ void sendViewMessage(char* msg, int msgLen){
 					"\r\n", ip, msgLen, msg);
 			
 	write(sock, header, strlen(header));
-	
-	fprintf(stderr, "Sending msg:\n %s\n\n", header);
 
 	shutdown(sock, SHUT_RDWR); 
 	close(sock); 
@@ -112,8 +110,8 @@ struct fp_print_data *enroll(struct fp_dev *dev) {
 			fp_img_free(img);
 		}*/
 		if (r < 0) {
-			fprintf(stderr,"Enroll failed with error %d\n", r);
-			sprintf(msg, "{\"message\":\"Enroll failed with error %d\",\"userId\":\"%d\"}", r, userId);
+			fprintf(stderr,"Enrollment failed with error %d\n", r);
+			sprintf(msg, "{\"message\":\"Enrollment failed with error %d\",\"userId\":\"%d\"}", r, userId);
 			sendViewMessage(msg, strlen(msg));
 			return NULL;
 		}
@@ -304,9 +302,15 @@ static void on_http_request(http_s *h) {
 	
   fiobj_free(key);
   
-  http_send_body(h, "OK", 2);
+  char msg[50];
+  sprintf(msg, "Enrollment service received user ID = %d", userId);
+  http_send_body(h, msg, strlen(msg));
   
   startEnroll(userId);
+  
+  
+  sprintf(msg, "{\"message\":\"DISCONNECT\",\"userId\":\"%d\"}", userId);
+  sendViewMessage(msg, strlen(msg));
 }
 
 
@@ -314,7 +318,7 @@ static void on_http_request(http_s *h) {
 
 int main() {
 	
-  //spring boot IP and port
+  //spring boot rest API IP and port
   char* ip = getenv("WEBSERVER");
   char* port = getenv("WEBSERVER_PORT");
   
@@ -331,7 +335,7 @@ int main() {
     return 1;
   }
   
-  fprintf(stdout, "Fingerprint Enrollment service started. Listening on port 3000...\n");
+   fprintf(stdout, "Fingerprint Enrollment service started. Listening on port 3000...\n");
   
   
   fio_start(.threads = 1, .workers = 1);
