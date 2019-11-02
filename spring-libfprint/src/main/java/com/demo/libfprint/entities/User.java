@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
 
 @Entity(name = "User") 
@@ -16,8 +17,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "Name is mandatory")
     private String name;
 
+    @NotBlank(message = "Name is mandatory")
     private String email;
     
     @Lob

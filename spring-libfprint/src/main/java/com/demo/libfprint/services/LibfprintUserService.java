@@ -3,6 +3,9 @@ package com.demo.libfprint.services;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +79,14 @@ public class LibfprintUserService {
 		}
 
 		return outputStream.toByteArray(); 
+	}
+
+	public void save(User user) {
+		this.userRepository.save(user);
+	}
+
+	public Iterable<User> findAll() {
+		return this.userRepository.findAll();
 	}
 
 
