@@ -10,11 +10,13 @@ import com.demo.libfprint.valueobjects.LibfprintMessage;
 @Service
 public class LibfprintApiService {
 
-	private LibfprintProperties libApiProperties;
+	private final LibfprintProperties libApiProperties;
+	private final LibfprintUserService userService;
 	
 	@Autowired
-	public LibfprintApiService(LibfprintProperties libApiProperties) {
+	public LibfprintApiService(LibfprintProperties libApiProperties, LibfprintUserService userService) {
 		this.libApiProperties = libApiProperties;
+		this.userService = userService;
 	}
 	
 	public String startEnroll(Integer userId) {
@@ -22,7 +24,9 @@ public class LibfprintApiService {
 		
 		try {
 		    RestTemplate restTemplate = new RestTemplate();
-		    String result = restTemplate.postForObject(uri, new LibfprintMessage(userId.toString()), String.class);
+		    LibfprintMessage msg = new LibfprintMessage();
+		    msg.setUserId(userId.toString());
+		    String result = restTemplate.postForObject(uri, msg, String.class);
 
 		    return result;
 		}catch(Exception e) {
@@ -31,13 +35,35 @@ public class LibfprintApiService {
 		
 	}
 
-	public boolean startVerification(Integer userId) {
+	public String startVerification(Integer userId) {
 		final String uri = this.libApiProperties.getUris().getVerify();
 
-	    RestTemplate restTemplate = new RestTemplate();
-	    String result = restTemplate.postForObject(uri, new LibfprintMessage(userId.toString()), String.class);
+	    try {
+	    	RestTemplate restTemplate = new RestTemplate();
+		    LibfprintMessage msg = new LibfprintMessage();
+		    msg.setUserId(userId.toString());
+		    String result = restTemplate.postForObject(uri, msg, String.class);
 
-	    return result.equals("OK");
+		    return result;
+	    }catch(Exception e) {
+			return e.getMessage() + " " + uri;
+		}
+	}
+	
+	public String startIdentification() {
+		final String uri = this.libApiProperties.getUris().getIdentify();
+
+	    try {
+	    	RestTemplate restTemplate = new RestTemplate();
+	    	Long totalUsers = this.userService.getTotalUsers();
+	    	LibfprintMessage msg = new LibfprintMessage();
+		    msg.setMessage(totalUsers.toString());
+		    String result = restTemplate.postForObject(uri, msg, String.class);
+
+		    return result;
+	    }catch(Exception e) {
+			return e.getMessage() + " " + uri;
+		}
 	}
 
 }

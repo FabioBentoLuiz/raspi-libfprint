@@ -3,10 +3,6 @@ package com.demo.libfprint.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.libfprint.entities.User;
 import com.demo.libfprint.services.LibfprintApiService;
 import com.demo.libfprint.services.LibfprintUserService;
-import com.demo.libfprint.valueobjects.LibfprintMessage;
 
 @RestController
 public class LibfprintDemoController {
@@ -51,8 +46,13 @@ public class LibfprintDemoController {
 	}
 	
 	@RequestMapping(value ="/startVerification", method = RequestMethod.GET)
-	public void startVerification(int userId) {
-		this.libApiService.startVerification(userId);
+	public String startVerification(int userId) {
+		return this.libApiService.startVerification(userId);
+	}
+	
+	@RequestMapping(value ="/startIdentification", method = RequestMethod.GET)
+	public String startIdentification() {
+		return this.libApiService.startIdentification();
 	}
 	
 	@RequestMapping(value ="/getAllFingerprints", method = RequestMethod.GET)

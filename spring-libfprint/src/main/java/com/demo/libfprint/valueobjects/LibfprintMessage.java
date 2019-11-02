@@ -2,31 +2,30 @@ package com.demo.libfprint.valueobjects;
 
 public class LibfprintMessage {
 
-	private String parameter;
-	private String id;
+	private String message;
+	private String userId;
 
 	public LibfprintMessage() {
 
 	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 	
-	public LibfprintMessage(String parameter) {
-		this.parameter = parameter;
-	}
 	
-	public String getParameter() {
-		return parameter;
-	}
-
-	public void setParameter(String parameter) {
-		this.parameter = parameter;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
+	
 
 }

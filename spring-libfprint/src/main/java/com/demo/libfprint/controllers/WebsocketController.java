@@ -3,14 +3,15 @@ package com.demo.libfprint.controllers;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.libfprint.valueobjects.LibfprintMessage;
 
-@Controller
+@RestController
 public class WebsocketController {
  
 	private final SimpMessagingTemplate simpMessagingTemplate;
@@ -20,12 +21,16 @@ public class WebsocketController {
 		this.simpMessagingTemplate = simpMessagingTemplate;
 	}
  
-	@MessageMapping("/topic")
-    public void processMessageFromClient(@Payload LibfprintMessage message) throws Exception {
+	@RequestMapping(value ="/libfprintMessages", method = RequestMethod.POST)
+    public void processMessageFromClient(@RequestBody LibfprintMessage message) throws Exception {
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		
-		this.simpMessagingTemplate.convertAndSend("/queue/chats-" + message.getId(), "[" + LocalDateTime.now().format(formatter) + "]:" + message.getParameter());
-    }
+		if(message.getMessage().equals("DISCONNECT"))
+			this.simpMessagingTemplate.convertAndSend("/queue/user-" + message.getUserId(), message.getMessage());
+		else
+			this.simpMessagingTemplate.convertAndSend("/queue/user-" + message.getUserId(), "[" + LocalDateTime.now().format(formatter) + "]: " + message.getMessage());
+	    
+	}
 
 }

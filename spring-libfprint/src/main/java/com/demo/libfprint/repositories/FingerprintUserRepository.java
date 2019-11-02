@@ -9,4 +9,5 @@ import com.demo.libfprint.entities.User;
 public interface FingerprintUserRepository extends CrudRepository<User, Integer> {
 
 	User findById(int id);
+	long countByFingerprintNotNull();
 }

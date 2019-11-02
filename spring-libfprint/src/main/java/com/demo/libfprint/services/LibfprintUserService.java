@@ -4,8 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,11 +64,14 @@ public class LibfprintUserService {
 
 		for(User user : users)
 		{
+			if(user.getFingerprint() == null)
+				continue;
+			
 			try {
 				outputStream.write(user.getFingerprint());
 				//the \t is just a delimiter so it can be 'splited' by the identification service
 				//TODO: find out a more elegant way to do so
-				outputStream.write('\t');
+				outputStream.write('\b');
 			} catch (IOException e) {
 				System.err.println("Stream error writing for user ID "+user.getId());
 				return new byte[] {};
@@ -87,6 +88,10 @@ public class LibfprintUserService {
 
 	public Iterable<User> findAll() {
 		return this.userRepository.findAll();
+	}
+
+	public long getTotalUsers() {
+		return this.userRepository.countByFingerprintNotNull();
 	}
 
 

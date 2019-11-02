@@ -33,6 +33,11 @@ public class UserController {
     public String showSignUpForm(User user) {
         return "create-user";
     }
+	
+	@GetMapping("/identify")
+    public String identify(User user) {
+        return "identify-user";
+    }
 
 	@PostMapping("/create-user")
     public String addUser(@Valid User user, BindingResult result, Model model) {
