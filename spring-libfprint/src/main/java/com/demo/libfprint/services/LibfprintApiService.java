@@ -55,9 +55,9 @@ public class LibfprintApiService {
 
 	    try {
 	    	RestTemplate restTemplate = new RestTemplate();
-	    	Long totalUsers = this.userService.getTotalUsers();
+	    	String fpSizes = this.userService.getEnrolledFpSizes();
 	    	LibfprintMessage msg = new LibfprintMessage();
-		    msg.setMessage(totalUsers.toString());
+		    msg.setMessage(fpSizes);
 		    String result = restTemplate.postForObject(uri, msg, String.class);
 
 		    return result;
