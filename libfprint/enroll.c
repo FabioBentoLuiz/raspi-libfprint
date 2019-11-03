@@ -19,8 +19,9 @@ static void on_http_request(http_s *h);
 int userId;
 char deviceName[1024];
 
+//TODO: implement post with facil.io
 int socket_connect(char *host, in_port_t port){
-	fprintf(stdout, "Connecting to IP |%s| Port |%d|\n", host, port);
+	//fprintf(stdout, "Connecting to IP |%s| Port |%d|\n", host, port);
 	struct hostent *hp;
 	struct sockaddr_in addr;
 	int on = 1, sock;     

@@ -20,8 +20,9 @@ static void on_http_response(http_s *h);
 struct fp_print_data *data;
 int userId;
 
+//TODO: implement post with facil.io
 int socket_connect(char *host, in_port_t port){
-	fprintf(stdout, "Connecting to IP |%s| Port |%d|\n", host, port);
+	//fprintf(stdout, "Connecting to IP |%s| Port |%d|\n", host, port);
 	struct hostent *hp;
 	struct sockaddr_in addr;
 	int on = 1, sock;     
@@ -194,9 +195,7 @@ int startVerification()
 		goto out;
 	}
 
-	printf("Opened device. Loading previously enrolled right index finger "
-		"data...\n");
-		
+	
 	if (!data) {
 		fprintf(stderr, "Failed to load fingerprint, error %d\n", r);
 		fprintf(stderr, "Did you remember to enroll your finger first?\n");
@@ -204,8 +203,6 @@ int startVerification()
 		sendViewMessage(msg, strlen(msg));
 		goto out_close;
 	}
-
-	fprintf(stdout, "Print loaded, starting verification...\n");
 	
 	verify(dev, data);
 
@@ -244,6 +241,7 @@ static void on_http_request(http_s *h) {
   }
   
   fiobj_free(key);
+  fiobj_free(obj);
   
   char msg[50];
   sprintf(msg, "Verification service received user ID = %d", userId);
@@ -274,21 +272,33 @@ static void on_http_response(http_s *h) {
   fprintf(stdout, "Fingerprint received - size = %d\n", raw.len);
   
   data = fp_print_data_from_data((unsigned char *)raw.data, raw.len);
-  
-  if(!data)
-	fprintf(stderr, "Fingerprint data conversion failed!\n");
-  
-  char msg[100];
-  sprintf(msg, "Verification service loaded the enrolled fingerprint - user ID = %d", userId);
-  
-  http_send_body(h, msg, strlen(msg));
 
   fiobj_free(obj);
 
-  startVerification();
+  char msg[100];
+
+  if(data){
+    fprintf(stdout, "Verification service loaded the enrolled fingerprint - user ID = %d\n", userId);
+    
+    sprintf(msg, "Verification service loaded the enrolled fingerprint - user ID = %d", userId);
+    sendViewMessage(msg, strlen(msg));
+    
+    http_send_body(h, msg, strlen(msg));
+
+    startVerification();
+    
+    sprintf(msg, "{\"message\":\"DISCONNECT\",\"userId\":\"%d\"}", userId);
+    sendViewMessage(msg, strlen(msg));
   
-  sprintf(msg, "{\"message\":\"DISCONNECT\",\"userId\":\"%d\"}", userId);
-  sendViewMessage(msg, strlen(msg));
+  }else {
+    fprintf(stderr, "Fingerprint data conversion failed!\n");
+    sprintf(msg, "{\"message\":\"Fingerprint data conversion failed. Could not load the user fingerprint\",\"userId\":\"%d\"}", userId);
+    sendViewMessage(msg, strlen(msg));
+    
+    sprintf(msg, "{\"message\":\"DISCONNECT\",\"userId\":\"%d\"}", userId);
+    sendViewMessage(msg, strlen(msg));
+  }
+  
 }
 
 int main() {

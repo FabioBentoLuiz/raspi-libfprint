@@ -28,11 +28,11 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=1
-FILE_NAME_0=2994;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fidentify.c;0;2
-FILE_NAME_1=951;C;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fenroll.c;0;4
-FILE_NAME_2=4397;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fverify.c;0;2
-FILE_NAME_3=5355;C;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fprojects%2Fhello-world%2Fenroll.c;0;4
+current_page=0
+FILE_NAME_0=3968;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fidentify.c;0;2
+FILE_NAME_1=7934;C;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fenroll.c;0;4
+FILE_NAME_2=357;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fverify.c;0;2
+FILE_NAME_3=439;C;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fprojects%2Fhello-world%2Fenroll.c;0;4
 
 [VTE]
 last_dir=/home/pi
