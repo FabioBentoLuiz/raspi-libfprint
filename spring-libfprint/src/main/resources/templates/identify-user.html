@@ -19,10 +19,35 @@
 <script src="../js/app.js"></script>
 </head>
 <body>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" href="#">libfprint DEMO</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNav" aria-controls="navbarNav"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav">
+				<li><a class="nav-link" href="/"> <i
+						class="fas fa-user-plus ml-2"></i>&nbsp;Users
+				</a></li>
+				<li class="nav-item active"><a class="nav-link"
+					href="/identify"> <i class="fas fa-hand-point-up ml-2"></i>&nbsp;Identify
+						<span class="sr-only">(current)</span>
+				</a></li>
+			</ul>
+		</div>
+	</nav>
 	<div class="container my-5">
 		<h2 class="mb-5">Identify user</h2>
-<input type="submit" class="btn btn-primary" id="identify" value="Identify">
-		<div class="row">
+
+		<p class="my-5">
+			<a class="btn btn-primary" id="identify"><i
+				class="fas fa-fingerprint ml-2"></i> Identify</a>
+		</p>
+
+
+		<div class="row" style="margin-top: 10px;">
 			<div class="col-md-12">
 				<table id="msgs-table" class="table table-striped">
 					<thead>
