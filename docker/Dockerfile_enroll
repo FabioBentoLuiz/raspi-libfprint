@@ -1,0 +1,48 @@
+FROM arm32v7/python:3.8-buster AS builder
+COPY ./libfprint/enroll.c /tmp
+WORKDIR /tmp
+RUN pip3 install --user meson && pip3 install meson && apt-get update \
+	&& apt-get install -y \
+	ninja-build \
+	cmake \ 
+	glib2.0 \ 
+	libusb-1.0 \
+	libnss3-dev \
+	libxcb-xv0-dev \
+	libxv-dev \
+	gtk-doc-tools \
+	udev \
+	&& wget https://github.com/freedesktop/libfprint/archive/V_1_0.tar.gz \
+	&& tar -xvf V_1_0.tar.gz \
+	&& wget https://github.com/boazsegev/facil.io/archive/0.7.3.tar.gz \
+	&& tar -xvf 0.7.3.tar.gz \
+	&& cd libfprint-V_1_0 \
+	&& /root/.local/bin/meson builddir \
+	&& cd builddir \
+ 	&& ninja \
+	&& mkdir -p /app/libfprint-V_1_0/lib \
+	&& mkdir -p /app/libfprint-V_1_0/include \
+	&& mv /tmp/libfprint-V_1_0/builddir/libfprint/* /app/libfprint-V_1_0/lib \
+	&& mv /tmp/libfprint-V_1_0/libfprint/* /app/libfprint-V_1_0/include \
+	&& cd /tmp/facil.io-0.7.3/ \
+	&& make lib \
+	&& mkdir -p /app/facil.io-0.7.3/lib \
+	&& mkdir -p /app/facil.io-0.7.3/include \
+	&& mv /tmp/facil.io-0.7.3/tmp/libfacil.so /app/facil.io-0.7.3/lib \
+	&& mv /tmp/facil.io-0.7.3/libdump/include/* /app/facil.io-0.7.3/include \
+	&& cd /tmp \
+	&& gcc -Wall -o "enroll" "enroll.c" -I "/app/libfprint-V_1_0/include" -lm "/app/libfprint-V_1_0/lib/libfprint.so.0" -I "/app/libfprint-V_1_0/lib" -Im "/app/facil.io-0.7.3/lib/libfacil.so" -I "/app/facil.io-0.7.3/include" -Wl,-rpath=/app/libfprint-V_1_0/lib/,-rpath=/app/facil.io-0.7.3/lib/ \
+	&& mv enroll /app
+
+FROM debian:buster-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y \
+	libusb-1.0 \
+	libnss3-dev \
+	glib2.0 \
+	libpixman-1-0 
+COPY --from=builder /app .
+CMD ["./enroll"]
+
+	
+	
