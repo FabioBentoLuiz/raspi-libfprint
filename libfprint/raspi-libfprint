@@ -28,11 +28,10 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=0
-FILE_NAME_0=3968;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fidentify.c;0;2
-FILE_NAME_1=7934;C;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fenroll.c;0;4
-FILE_NAME_2=357;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fverify.c;0;2
-FILE_NAME_3=439;C;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fprojects%2Fhello-world%2Fenroll.c;0;4
+current_page=1
+FILE_NAME_0=2612;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fidentify.c;0;2
+FILE_NAME_1=0;C;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fenroll.c;0;4
+FILE_NAME_2=2313;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fverify.c;0;2
 
 [VTE]
 last_dir=/home/pi
@@ -43,5 +42,5 @@ CFT_02_CM=cppcheck --language=c --enable=warning,style --template=gcc "%f"
 CFT_02_WD=
 filetypes=C;
 CFT_01_LB=_Build
-CFT_01_CM=gcc -Wall -o "%e" "%f" -L "/home/pi/Downloads/libfprint-master/builddir/libfprint" -lm "/home/pi/Downloads/libfprint-master/builddir/libfprint/libfprint.so.0" -I "/home/pi/Downloads/libfprint-master/libfprint" -Im "/home/pi/Downloads/facil.io-0.7.3/tmp/libfacil.so" -I "/home/pi/Downloads/facil.io-0.7.3/libdump/include"
+CFT_01_CM=gcc -Wall -o "%e" "%f" -I "/home/pi/Downloads/libfprint-master/builddir/libfprint" -lm "/home/pi/Downloads/libfprint-master/builddir/libfprint/libfprint.so.0" -I "/home/pi/Downloads/libfprint-master/libfprint" -Im "/home/pi/Downloads/facil.io-0.7.3/tmp/libfacil.so" -I "/home/pi/Downloads/facil.io-0.7.3/libdump/include"
 CFT_01_WD=
