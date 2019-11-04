@@ -3,6 +3,8 @@ package com.demo.libfprint.services;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,25 +60,13 @@ public class LibfprintUserService {
 	}
 
 	public byte[] getAllFingerprints() {
-		Iterable<User> users = userRepository.findAll();
+		List<User> users = userRepository.findAllByFingerprintNotNull();
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
 
-		for(User user : users)
+		for(int i = 0; i < users.size(); i++)
 		{
-			if(user.getFingerprint() == null)
-				continue;
-			
-			try {
-				outputStream.write(user.getFingerprint());
-				//the \t is just a delimiter so it can be 'splited' by the identification service
-				//TODO: find out a more elegant way to do so
-				outputStream.write('\b');
-			} catch (IOException e) {
-				System.err.println("Stream error writing for user ID "+user.getId());
-				return new byte[] {};
-			}
-			
+			outputStream.writeBytes(users.get(i).getFingerprint());
 		}
 
 		return outputStream.toByteArray(); 
@@ -90,8 +80,19 @@ public class LibfprintUserService {
 		return this.userRepository.findAll();
 	}
 
-	public long getTotalUsers() {
-		return this.userRepository.countByFingerprintNotNull();
+	public String getEnrolledFpSizes() {
+		List<User> users = userRepository.findAllByFingerprintNotNull();
+		
+		String fpSizes = users.stream()
+				.map(u -> String.valueOf(u.getFingerprint().length))
+				.collect(Collectors.joining(","));
+		
+		return fpSizes;
+	}
+
+	public User getUserByIndex(int index) {
+		List<User> users = userRepository.findAllByFingerprintNotNull();
+		return users.get(index);
 	}
 
 
