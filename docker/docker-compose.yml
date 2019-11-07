@@ -18,13 +18,18 @@ services:
   volumes:
     - /tmp/docker/volumes/mysql:/var/lib/mysql
     - ../database/libfprint.sql:/tmp/libfprint.sql
- #enroll:
-  #image: fabiobentoluiz/libfprint_enroll:latest
-  #depends_on:
-   #- web
-  #ports:
-   #- "5000:3000"
-  #restart: unless-stopped
-  #environment:
-   #- WEBSERVER=web
-   #- WEBSERVER_PORT=8080
+  ports:
+   - "5000:3306"
+ enroll:
+  image: fabiobentoluiz/libfprint_enroll:latest
+  depends_on:
+   - web
+  restart: unless-stopped
+  environment:
+   - WEBSERVER=web
+   - WEBSERVER_PORT=8080
+  volumes:
+   - /dev:/dev
+  privileged: true
+  ports:
+   - "5001:3000"
