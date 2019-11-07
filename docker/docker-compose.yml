@@ -1,10 +1,30 @@
 version: "3.7"
 services:
- enroll:
-  image: fabiobentoluiz/libfprint_enroll:latest
+ web:
+  image: fabiobentoluiz/libfprint_web:latest
+  depends_on:
+   - database
+  restart: "no"
   ports:
-   - "5000:3000"
-  #restart: unless-stopped
+   - "80:8080"
   environment:
-   - WEBSERVER=192.168.2.120
-   - WEBSERVER_PORT=8080
+   - SPRING_PROFILES_ACTIVE=docker
+ database:
+  image: hypriot/rpi-mysql:arm-5.5
+  restart: unless-stopped
+  environment: 
+   - MYSQL_ROOT_PASSWORD=123456
+  command: --init-file /tmp/libfprint.sql
+  volumes:
+    - /tmp/docker/volumes/mysql:/var/lib/mysql
+    - ../database/libfprint.sql:/tmp/libfprint.sql
+ #enroll:
+  #image: fabiobentoluiz/libfprint_enroll:latest
+  #depends_on:
+   #- web
+  #ports:
+   #- "5000:3000"
+  #restart: unless-stopped
+  #environment:
+   #- WEBSERVER=web
+   #- WEBSERVER_PORT=8080
