@@ -27,6 +27,8 @@ public class LibfprintApiService {
 		    LibfprintMessage msg = new LibfprintMessage();
 		    msg.setUserId(userId.toString());
 		    String result = restTemplate.postForObject(uri, msg, String.class);
+		    
+		    System.out.println("Starting enrollment for user ID "+msg.getUserId());
 
 		    return result;
 		}catch(Exception e) {

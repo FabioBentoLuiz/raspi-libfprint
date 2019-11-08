@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM arm32v7/adoptopenjdk:11.0.4_11-jdk-hotspot-bionic
 COPY ./spring-libfprint/target/spring-libfprint-0.0.1-SNAPSHOT.jar /usr/src/libfprint/app.jar
 WORKDIR /usr/src/libfprint
 EXPOSE 8080
