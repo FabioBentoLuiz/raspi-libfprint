@@ -8,7 +8,7 @@ spring:
   profiles: dev
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.2.124:5000/libfprint
+    url: jdbc:mysql://localhost:3306/libfprint
     username: libfprint
     password: 123456
 libfprint:
