@@ -42,6 +42,7 @@ RUN apt-get update && apt-get install -y \
 	glib2.0 \
 	libpixman-1-0 
 COPY --from=builder /app .
+EXPOSE 3000
 CMD ["./enroll"]
 
 	

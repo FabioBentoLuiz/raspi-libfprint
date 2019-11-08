@@ -28,10 +28,10 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=1
-FILE_NAME_0=2612;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fidentify.c;0;2
-FILE_NAME_1=0;C;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fenroll.c;0;4
-FILE_NAME_2=2313;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fverify.c;0;2
+current_page=0
+FILE_NAME_0=8145;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fidentify.c;0;2
+FILE_NAME_1=1162;C;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fenroll.c;0;4
+FILE_NAME_2=1716;C;0;EUTF-8;2;1;0;%2Fhome%2Fpi%2Fprojects%2Fraspi-libfprint%2Flibfprint%2Fverify.c;0;2
 
 [VTE]
 last_dir=/home/pi

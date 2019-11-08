@@ -73,6 +73,7 @@ void sendViewMessage(char* msg, int msgLen){
 
 	shutdown(sock, SHUT_RDWR); 
 	close(sock); 
+	sleep(1);
 }
 
 struct fp_dscv_dev *discover_device(struct fp_dscv_dev **discovered_devs)
@@ -302,7 +303,7 @@ static void on_http_response(http_s *h) {
   int totalSize = raw.len;
   printf("Received total size of fingerprint array = %d\n", totalSize);
   
-  struct fp_print_data *tmp[fpQuantity];
+  struct fp_print_data *tmp[fpQuantity + 1];
   
   int i = 0, j = 0, pos = 0;
 
@@ -331,9 +332,13 @@ static void on_http_response(http_s *h) {
     
   http_send_body(h, "OK", 2);
 
-	fiobj_free(obj);
+  fiobj_free(obj);
 
-	startIdentification();
+  startIdentification();
+  
+  char msg[50];
+  sprintf(msg, "{\"message\":\"DISCONNECT\",\"userId\":\"%d\"}", userId);
+  sendViewMessage(msg, strlen(msg));
 }
 
 int main() {

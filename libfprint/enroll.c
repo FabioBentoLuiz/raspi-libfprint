@@ -69,6 +69,7 @@ void sendViewMessage(char* msg, int msgLen){
 
 	shutdown(sock, SHUT_RDWR); 
 	close(sock); 
+	sleep(1);
 }
 
 struct fp_dscv_dev *discover_device(struct fp_dscv_dev **discovered_devs)
