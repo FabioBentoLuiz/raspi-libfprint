@@ -1,14 +1,5 @@
 version: "3.7"
 services:
- web:
-  image: fabiobentoluiz/libfprint_web:latest
-  depends_on:
-   - database
-  restart: "no"
-  ports:
-   - "80:8080"
-  environment:
-   - SPRING_PROFILES_ACTIVE=docker
  database:
   image: hypriot/rpi-mysql:arm-5.5
   restart: unless-stopped
@@ -51,3 +42,12 @@ services:
   volumes:
    - /dev:/dev
   privileged: true
+ web:
+  image: fabiobentoluiz/libfprint_web:latest
+  depends_on:
+   - database
+  restart: "no"
+  ports:
+   - "80:8080"
+  environment:
+   - SPRING_PROFILES_ACTIVE=docker
