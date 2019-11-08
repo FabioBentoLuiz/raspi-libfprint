@@ -11,4 +11,4 @@ jobs:
         name: fabiobentoluiz/libfprint_web
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        dockerfile: ./docker/Dockerfile_web
+        dockerfile: ./docker/Dockerfile_enroll
