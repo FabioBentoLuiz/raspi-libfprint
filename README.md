@@ -16,8 +16,12 @@ It contains also the `docker-compose.yml` file to start the containers all toget
 
 Contains the .c source files used for enrollment, verification and identification. They are based on the original examples provided by the libfprint project [here](https://github.com/freedesktop/libfprint/tree/master/examples).
 
+Look the Libfprint license file for more information. See http://www.freedesktop.org/wiki/Software/fprint/libfprint
+
 * spring-libfprint folder
 
 Contains the Spring Boot application with the rest service (that communicate with the other libfprint services) and web components (with the pages to register users and simulate the enrollment, verification and identification).
+
+
 #
 #
